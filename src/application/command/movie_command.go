@@ -1,10 +1,10 @@
 package command
 
 type movieCommand struct {
-	id int64
-	user_id int64
-	title string
-	duration int
-	synopsis string
-	image_url string
+	id int64 `json:"id"`
+	user_id int64 `json:"user_id"`
+	title string `json:"title"`
+	duration int `json:"duration"`
+	synopsis string `json:"synopsis"`
+	image_url string `json:"image_url"`
 }
