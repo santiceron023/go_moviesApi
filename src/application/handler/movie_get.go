@@ -6,7 +6,7 @@ import (
 )
 
 type GetHandler interface {
-	Handler(movieId string) (model.Movie,error)
+	Execute(movieId string) (model.Movie,error)
 }
 
 type getHandler struct {
@@ -19,8 +19,8 @@ func NewGetHandler(db port.MoviesRepository) GetHandler {
 	}
 }
 
-func (name *getHandler) Handler(movieId string)(model.Movie,error)  {
-	movie, err := name.movieRepository.GetById(movieId)
+func (handler *getHandler) Execute(movieId string)(model.Movie,error)  {
+	movie, err := handler.movieRepository.GetById(movieId)
 	if err != nil{
 		return model.Movie{}, err
 	}

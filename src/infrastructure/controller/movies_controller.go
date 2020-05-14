@@ -7,26 +7,54 @@ import (
 )
 
 type MoviesRestController interface {
-	Get(c *gin.Context)
+	Get(*gin.Context)
+	List(*gin.Context)
+	Save(*gin.Context)
 }
 
 type movieRestController struct {
-	getMovieHandler handler.GetHandler
+	getHandler    handler.GetHandler
+	listHandler   handler.ListHandler
+	createHandler handler.CreateHandler
 }
 
-func NewRestHandler(handlerser handler.GetHandler) *movieRestController {
+func (rest *movieRestController) Save(context *gin.Context) {
+	//var movieCommand command.MovieCommand
+	//if err := context.ShouldBindJSON(&movieCommand); err != nil {
+	//	//todo ere
+	//}
+	//
+	//if err := rest.createHandler.Execute(movieCommand);err != nil{
+	//
+	//}
+	context.JSON(http.StatusOK,"ok")
+}
+
+func NewRestHandler(getHandler handler.GetHandler, listHandler handler.ListHandler, createHandler handler.CreateHandler) *movieRestController {
 	return &movieRestController{
-		getMovieHandler: handlerser,
+		getHandler:    getHandler,
+		listHandler:   listHandler,
+		createHandler: createHandler,
 	}
 }
 
-func (m movieRestController) Get(c *gin.Context){
+func (rest *movieRestController) Get(c *gin.Context) {
 	movieId := c.Param("movie_id")
-	movie, err := m.getMovieHandler.Handler(movieId)
-	if err != nil{
+	movie, err := rest.getHandler.Execute(movieId)
+	if err != nil {
 		//TODO MEHORAR
-		c.JSON(http.StatusNotImplemented,"la puta")
+		c.JSON(http.StatusNotImplemented, "la puta")
 		return
 	}
-	c.JSON(http.StatusOK,movie)
+	c.JSON(http.StatusOK, movie)
+}
+
+func (rest *movieRestController) List(c *gin.Context) {
+	movie, err := rest.listHandler.Execute()
+	if err != nil {
+		//TODO MEHORAR
+		c.JSON(http.StatusNotImplemented, "la puta")
+		return
+	}
+	c.JSON(http.StatusOK, movie)
 }
