@@ -7,3 +7,7 @@ type InvalidMovieName struct {
 func (e InvalidMovieName) Error() string {
 	return e.ErrMessage
 }
+
+func (e InvalidMovieName) IsBusinessLogic() bool {
+	return true
+}
