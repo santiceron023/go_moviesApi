@@ -12,7 +12,7 @@ func ValidateRequired(value string, message string) error {
 	return nil
 }
 
-func ValidateLengtt(value int,message string) error{
+func ValidateLength(value int,message string) error{
 	if value <= 0 {
 		return errors.New(message)
 	}

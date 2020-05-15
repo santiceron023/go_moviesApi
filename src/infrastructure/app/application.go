@@ -5,8 +5,8 @@ import (
 	"movies/src/application/handler"
 	"movies/src/infrastructure/controller"
 	"movies/src/infrastructure/middleare"
-	"movies/src/infrastructure/repository"
 	"movies/src/infrastructure/repository/adapter"
+	"movies/src/infrastructure/repository/client"
 )
 
 var (
@@ -15,21 +15,16 @@ var (
 
 func StartApplication() {
 
-	//session, dbErr := cassandra.GetSesion()
-	//if dbErr != nil {
-	//	panic(dbErr)
-	//}
-	//session.Close()
-	//atService := access_token.NewService(db.NewRepository())
-	//atHandler := http.NewHandler(atService)
+	router.Use(middleare.ErrorHandler())
 
-	router.Use(middleare.BenchMark())
-	movierepo := adapter.NewRepository()
-	getHandker := handler.NewGetHandler(movierepo)
-	listHandler := handler.NewListHandler(movierepo)
-	createHandler := handler.NewCreateHandler(movierepo)
-	restHandler := controller.NewRestHandler(getHandker,listHandler,createHandler)
+	movieRepository := adapter.NewRepository()
+	getHandler := handler.NewGetHandler(movieRepository)
+	listHandler := handler.NewListHandler(movieRepository)
+	createHandler := handler.NewCreateHandler(movieRepository)
+	restHandler := controller.NewRestHandler(getHandler,listHandler,createHandler)
+
 	mapUrls(restHandler)
-	repository.GetSession()
+	client.GetSession()
+
 	router.Run(":8080")
 }

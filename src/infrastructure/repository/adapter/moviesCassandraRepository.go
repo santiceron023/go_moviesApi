@@ -2,8 +2,9 @@ package adapter
 
 import (
 	"github.com/gocql/gocql"
+	"movies/src/domain/exception"
 	"movies/src/domain/model"
-	"movies/src/infrastructure/repository"
+	"movies/src/infrastructure/repository/client"
 	"movies/src/infrastructure/utils/rest_errors"
 )
 
@@ -27,7 +28,7 @@ type dbRepository struct {
 }
 
 func (r *dbRepository) Save(m model.Movie) error {
-	if err := repository.GetSession().Query(queryInsertMovie,
+	if err := client.GetSession().Query(queryInsertMovie,
 		gocql.TimeUUID(),
 		m.User_id,
 		m.Title,
@@ -35,8 +36,7 @@ func (r *dbRepository) Save(m model.Movie) error {
 		m.Synopsis,
 		m.Image_url,
 	).Exec(); err != nil {
-		//TODO ERRR
-		return nil
+		return err
 	}
 	return nil
 
@@ -45,7 +45,7 @@ func (r *dbRepository) Save(m model.Movie) error {
 func (r *dbRepository) List() ([]model.Movie, error) {
 	results := make([]model.Movie, 0)
 	var result model.Movie
-	iter := repository.GetSession().Query(queryListMovie).Iter()
+	iter := client.GetSession().Query(queryListMovie).Iter()
 	for iter.Scan(
 		&result.Id,
 		&result.User_id,
@@ -62,14 +62,8 @@ func (r *dbRepository) List() ([]model.Movie, error) {
 
 func (r *dbRepository) GetById(id string) (model.Movie, error) {
 
-	//r.Save(model.Movie{Title: "pelicula envidad desde go"})
-
-	////a,_ := r.List()
-	////fmt.Println(a)
-	//return model.Movie{},nil
-
 	var result model.Movie
-	if err := repository.GetSession().Query(queryGetMovie, id).Scan(
+	if err := client.GetSession().Query(queryGetMovie, id).Scan(
 		&result.Id,
 		&result.User_id,
 		&result.Title,
@@ -78,9 +72,8 @@ func (r *dbRepository) GetById(id string) (model.Movie, error) {
 		&result.Image_url,
 	); err != nil {
 		if err == gocql.ErrNotFound {
-			return model.Movie{}, rest_errors.NewNotFoundError("no access token found with given id")
+			return model.Movie{}, exception.MovieNotFound{ErrMessage: "no movie found with given id"}
 		}
-		//TODO TERMINAR ERRORES PERSONALIZADOS
 		return model.Movie{}, rest_errors.NewInternalServerError("error when trying to get current id", err)
 	}
 	return result, nil

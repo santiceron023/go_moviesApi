@@ -1,7 +1,7 @@
-package utils
+package date
 
 import (
-"time"
+	"time"
 )
 
 const (

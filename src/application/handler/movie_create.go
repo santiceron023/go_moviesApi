@@ -17,7 +17,7 @@ type createHandler struct {
 func (handler *createHandler) Execute(command command.MovieCommand) error {
 	movie, err := factory.CreateMovie(command)
 	if err != nil {
-		//todo error
+		return err
 	}
 	if err := handler.movieRepository.Save(movie); err != nil {
 		return err

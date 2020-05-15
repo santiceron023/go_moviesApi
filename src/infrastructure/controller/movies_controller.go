@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"movies/src/application/command"
 	"movies/src/application/handler"
+	"movies/src/infrastructure/utils/rest_errors"
 	"net/http"
 )
 
@@ -21,14 +22,36 @@ type movieRestController struct {
 
 func (rest *movieRestController) Save(context *gin.Context) {
 	var movieCommand command.MovieCommand
-	if err := context.ShouldBindJSON(&movieCommand); err != nil {
-		//todo ere
+	if errJson := context.ShouldBindJSON(&movieCommand); errJson != nil {
+		restErr := rest_errors.NewBadRequestError("invalid request object")
+		context.JSON(restErr.Status(),restErr)
+		return
 	}
+	if errCreate := rest.createHandler.Execute(movieCommand); errCreate != nil {
+		context.Error(errCreate)
+		return
+	}
+	context.JSON(http.StatusOK,"")
+}
 
-	if err := rest.createHandler.Execute(movieCommand);err != nil{
-		//todo err
+
+func (rest *movieRestController) Get(context *gin.Context) {
+	movieId := context.Param("movie_id")
+	movie, err := rest.getHandler.Execute(movieId)
+	if err != nil {
+		context.Error(err)
+		return
 	}
-	context.JSON(http.StatusOK,"ok")
+	context.JSON(http.StatusOK, movie)
+}
+
+func (rest *movieRestController) List(context *gin.Context) {
+	movies, err := rest.listHandler.Execute()
+	if err != nil {
+		context.Error(err)
+		return
+	}
+	context.JSON(http.StatusOK, movies)
 }
 
 func NewRestHandler(getHandler handler.GetHandler, listHandler handler.ListHandler, createHandler handler.CreateHandler) *movieRestController {
@@ -37,25 +60,4 @@ func NewRestHandler(getHandler handler.GetHandler, listHandler handler.ListHandl
 		listHandler:   listHandler,
 		createHandler: createHandler,
 	}
-}
-
-func (rest *movieRestController) Get(c *gin.Context) {
-	movieId := c.Param("movie_id")
-	movie, err := rest.getHandler.Execute(movieId)
-	if err != nil {
-		//TODO MEHORAR
-		c.JSON(http.StatusNotImplemented, "la puta")
-		return
-	}
-	c.JSON(http.StatusOK, movie)
-}
-
-func (rest *movieRestController) List(c *gin.Context) {
-	movie, err := rest.listHandler.Execute()
-	if err != nil {
-		//TODO MEHORAR
-		c.JSON(http.StatusNotImplemented, "la puta")
-		return
-	}
-	c.JSON(http.StatusOK, movie)
 }
