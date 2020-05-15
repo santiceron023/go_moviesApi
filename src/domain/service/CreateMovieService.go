@@ -1,6 +1,7 @@
 package service
 
 import (
+	"movies/src/application/command"
 	"movies/src/domain/model"
 	"movies/src/domain/port"
 )
@@ -13,7 +14,7 @@ type serviceCreateMovie struct {
 	repositoryUsers  port.UsersRepository
 }
 
-func (s *serviceCreateMovie) Execute(movie model.Movie) error {
+func (s *serviceCreateMovie) Execute(movie command.MovieCommand) error {
 	if err := s.repositoryUsers.CheckUser(movie.User_id);
 		err != nil {
 		//TODO

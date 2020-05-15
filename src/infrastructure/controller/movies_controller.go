@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"movies/src/application/command"
 	"movies/src/application/handler"
 	"net/http"
 )
@@ -19,14 +20,14 @@ type movieRestController struct {
 }
 
 func (rest *movieRestController) Save(context *gin.Context) {
-	//var movieCommand command.MovieCommand
-	//if err := context.ShouldBindJSON(&movieCommand); err != nil {
-	//	//todo ere
-	//}
-	//
-	//if err := rest.createHandler.Execute(movieCommand);err != nil{
-	//
-	//}
+	var movieCommand command.MovieCommand
+	if err := context.ShouldBindJSON(&movieCommand); err != nil {
+		//todo ere
+	}
+
+	if err := rest.createHandler.Execute(movieCommand);err != nil{
+		//todo err
+	}
 	context.JSON(http.StatusOK,"ok")
 }
 

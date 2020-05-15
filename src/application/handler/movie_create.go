@@ -1,21 +1,23 @@
 package handler
 
 import (
-	"movies/src/domain/model"
+	"movies/src/application/command"
+	"movies/src/application/factory"
 	"movies/src/domain/port"
 )
 
 type CreateHandler interface {
-	Execute(movie model.Movie) error
+	Execute(movie command.MovieCommand) error
 }
 
 type createHandler struct {
 	movieRepository port.MoviesRepository
 }
 
-func (handler *createHandler) Execute(movie model.Movie) error {
-	if err := movie.Validate(); err != nil {
-		return err
+func (handler *createHandler) Execute(command command.MovieCommand) error {
+	movie, err := factory.CreateMovie(command)
+	if err != nil {
+		//todo error
 	}
 	if err := handler.movieRepository.Save(movie); err != nil {
 		return err

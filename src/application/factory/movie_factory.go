@@ -5,8 +5,8 @@ import (
 	"movies/src/domain/model"
 )
 
-func CreateMovie(command command.MovieCommand) model.Movie {
+func CreateMovie(command command.MovieCommand) (model.Movie, error) {
 	var movie model.Movie
-	movie, err := user.CreateUser(userCommand.FirstName, userCommand.LastName, userCommand.Email, userCommand.Password)
-	return user, err
+	movie, err := movie.Create(command.User_id, command.Title, command.Length, command.Synopsis, command.Image_url)
+	return movie, err
 }

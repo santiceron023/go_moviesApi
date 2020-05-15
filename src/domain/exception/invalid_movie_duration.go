@@ -1,13 +1,13 @@
 package exception
 
-type InvalidMovieDuration struct {
+type InvalidMovieLength struct {
 	ErrMessage string
 }
 
-func (e InvalidMovieDuration) Error() string {
+func (e InvalidMovieLength) Error() string {
 	return e.ErrMessage
 }
 
-func (e InvalidMovieDuration) IsBusinessLogic() bool {
+func (e InvalidMovieLength) IsBusinessLogic() bool {
 	return true
 }
