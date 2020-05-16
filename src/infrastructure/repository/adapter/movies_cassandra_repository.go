@@ -14,35 +14,37 @@ const (
 	queryListMovie   = "SELECT id, user_id, title,length,synopsis,image_url FROM movies;"
 )
 
-func NewRepository() DbRepository {
-	return &dbRepository{}
-}
-
-type DbRepository interface {
+type CassandraRepository interface {
 	GetById(string) (model.Movie, error)
 	List() ([]model.Movie, error)
-	Save(movie model.Movie) error
+	Save(movie model.Movie) (model.Movie,error)
 }
 
-type dbRepository struct {
+type cassandraRepository struct {
 }
 
-func (r *dbRepository) Save(m model.Movie) error {
+func NewRepository() CassandraRepository {
+	return &cassandraRepository{}
+}
+
+func (r *cassandraRepository) Save(m model.Movie) (model.Movie,error) {
+	id := gocql.TimeUUID()
 	if err := client.GetSession().Query(queryInsertMovie,
-		gocql.TimeUUID(),
+		id,
 		m.User_id,
 		m.Title,
 		m.Length,
 		m.Synopsis,
 		m.Image_url,
 	).Exec(); err != nil {
-		return err
+		return model.Movie{},err
 	}
-	return nil
+	m.Id = id.String()
+	return m,nil
 
 }
 
-func (r *dbRepository) List() ([]model.Movie, error) {
+func (r *cassandraRepository) List() ([]model.Movie, error) {
 	results := make([]model.Movie, 0)
 	var result model.Movie
 	iter := client.GetSession().Query(queryListMovie).Iter()
@@ -60,7 +62,7 @@ func (r *dbRepository) List() ([]model.Movie, error) {
 	return results, nil
 }
 
-func (r *dbRepository) GetById(id string) (model.Movie, error) {
+func (r *cassandraRepository) GetById(id string) (model.Movie, error) {
 
 	var result model.Movie
 	if err := client.GetSession().Query(queryGetMovie, id).Scan(
@@ -78,3 +80,6 @@ func (r *dbRepository) GetById(id string) (model.Movie, error) {
 	}
 	return result, nil
 }
+
+
+

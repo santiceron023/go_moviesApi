@@ -27,11 +27,12 @@ func (rest *movieRestController) Save(context *gin.Context) {
 		context.JSON(restErr.Status(),restErr)
 		return
 	}
-	if errCreate := rest.createHandler.Execute(movieCommand); errCreate != nil {
+	savedMovie, errCreate := rest.createHandler.Execute(movieCommand);
+	if errCreate != nil {
 		context.Error(errCreate)
 		return
 	}
-	context.JSON(http.StatusOK,"")
+	context.JSON(http.StatusCreated,savedMovie)
 }
 
 

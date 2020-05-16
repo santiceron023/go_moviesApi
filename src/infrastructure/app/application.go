@@ -23,8 +23,9 @@ func StartApplication() {
 	createHandler := handler.NewCreateHandler(movieRepository)
 	restHandler := controller.NewRestHandler(getHandler,listHandler,createHandler)
 
+	client.CreateKeyspace("pepino")
 	mapUrls(restHandler)
-	client.GetSession()
+	client.CreateSession()
 
 	router.Run(":8080")
 }

@@ -26,6 +26,7 @@ func (m *Movie) Create(
 	if err := validator.ValidateLength(Length, "movie length invalid"); err != nil {
 		return Movie{}, exception.InvalidMovieLength{ErrMessage: err.Error()}
 	}
+
 	return Movie{
 			User_id:   User_id,
 			Title:     Title,
