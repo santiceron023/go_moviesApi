@@ -1,13 +1,24 @@
-# movies# users
+﻿# go_moviesApi
+### Back End Api
 
-## Iniciar para desarrollo.
+Go Api to create and list (by ID and All) Movies
 
-Para iniciar la base de datos con docker basta con ejecutar el comando: `docker-compose up [-d] mongodb`.
+## Características
+* ***Hexagonal architecture***
 
-Nótese que el flag `-d` es opcional, y este lo que hace es correr el contenedor en daemon (background)
+* No sql DB
+* MiddleWare for error log
+* No ORM, faster Db access
 
----
 
-## Ejecutar build final (WIP)
+## Tecnologías
 
-Para construir el proyecto y correrlo basta con hacer `docker-compose up -d`. Esto levantará la base de datos, compilará y creará un contenedor con el ejecutable del proyecto y lo correrá en daemon (background).
+***Data Base:*** Cassandra
+
+***Dependency:*** Go modules 
+
+***Testing:*** Docker test Containers
+
+## Authors
+
+*   **Santiago Felipe Cerón Araujo** - [LinkedIn](https://www.linkedin.com/in/santiago-ceron-araujo)
